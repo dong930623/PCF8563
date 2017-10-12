@@ -209,7 +209,7 @@ void PCF8563_rest (void)
 	PCF5368_WriteOneByte (0x00, 0x20); 
 	//定时器产生脉冲中断
 	PCF5368_WriteOneByte (0x01, 0x11); 
-	//定时器产生中断控制和频度控制  1 0 秒   11  分
+	//倒数定时器 60分钟
 	PCF5368_WriteOneByte (0x0E, 0x83); 
 	PCF5368_WriteOneByte (0x0F, 0xFF); 
 	PCF5368_WriteOneByte (0x00, 0x00); 		 
