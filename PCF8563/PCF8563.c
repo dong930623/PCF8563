@@ -1,15 +1,14 @@
-/***************************************************************************
-** °æÈ¨ËùÓĞ:  FudaBD Copyright (c) 2013-2017  ********************             
-** ÎÄ¼şÃû³Æ:  PCF8563.c
-** ÄÚÈİÕªÒª:  PCF8563 ¶ÁĞ´º¯Êı
-** µ±Ç°°æ±¾:  v1.0
-** ×÷    Õß:  Donny
-** ´´½¨ÈÕÆÚ: 2017Äê10ÔÂ12ÈÕ
-** ĞŞ¸Ä¼ÇÂ¼: 
-** ĞŞ¸ÄÈÕÆÚ: 
-** °æ±¾ºÅ  : 
-** ĞŞ¸ÄÈË  : 
-** ĞŞ¸ÄÄÚÈİ: 
+/***************************************************************************      
+** æ–‡ä»¶åç§°:  PCF8563.c
+** å†…å®¹æ‘˜è¦:  PCF8563 è¯»å†™å‡½æ•°
+** å½“å‰ç‰ˆæœ¬:  v1.0
+** ä½œ    è€…:  Donny
+** åˆ›å»ºæ—¥æœŸ: 2017å¹´10æœˆ12æ—¥
+** ä¿®æ”¹è®°å½•: 
+** ä¿®æ”¹æ—¥æœŸ: 
+** ç‰ˆæœ¬å·  : 
+** ä¿®æ”¹äºº  : 
+** ä¿®æ”¹å†…å®¹: 
 ***************************************************************************/
 
 #include "PCF8563.h"
@@ -18,13 +17,13 @@
 void IIC_Init(void)
 {					     
 	GPIO_InitTypeDef GPIO_InitStructure;
-	//RCC->APB2ENR|=1<<4;//ÏÈÊ¹ÄÜÍâÉèIO PORTCÊ±ÖÓ 
+	//RCC->APB2ENR|=1<<4;//å…ˆä½¿èƒ½å¤–è®¾IO PORTCæ—¶é’Ÿ 
 	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOC, ENABLE );	
 						 
-	//GPIOC->CRH&=0XFFF00FFF;//PC11/12 ÍÆÍìÊä³ö
+	//GPIOC->CRH&=0XFFF00FFF;//PC11/12 æ¨æŒ½è¾“å‡º
 	//GPIOC->CRH|=0X00033000;	   
 	GPIO_InitStructure.GPIO_Pin = IIC_SCL_PIN;
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;   //ÍÆÍìÊä³ö
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP ;   //æ¨æŒ½è¾“å‡º
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	GPIO_Init(IIC_SCL_PORT, &GPIO_InitStructure);
 	GPIO_InitStructure.GPIO_Pin = IIC_SDA_PIN;
@@ -32,35 +31,35 @@ void IIC_Init(void)
 	Set_IIC_SCL;
 	Set_IIC_SDA;
 }
-//²úÉúIICÆğÊ¼ĞÅºÅ
+//äº§ç”ŸIICèµ·å§‹ä¿¡å·
 void IIC_Start(void)
 {
-	SDA_OUT();     //sdaÏßÊä³ö
+	SDA_OUT();     //sdaçº¿è¾“å‡º
 	Set_IIC_SDA;	  	  
 	Set_IIC_SCL;
 	delay_us(4);
  	Clr_IIC_SDA;//START:when CLK is high,DATA change form high to low 
 	delay_us(4);
-	Clr_IIC_SCL;//Ç¯×¡I2C×ÜÏß£¬×¼±¸·¢ËÍ»ò½ÓÊÕÊı¾İ 
+	Clr_IIC_SCL;//é’³ä½I2Cæ€»çº¿ï¼Œå‡†å¤‡å‘é€æˆ–æ¥æ”¶æ•°æ® 
 }	  
-//²úÉúIICÍ£Ö¹ĞÅºÅ
+//äº§ç”ŸIICåœæ­¢ä¿¡å·
 void IIC_Stop(void)
 {
-	SDA_OUT();//sdaÏßÊä³ö
+	SDA_OUT();//sdaçº¿è¾“å‡º
 	Clr_IIC_SCL;
 	Clr_IIC_SDA;//STOP:when CLK is high DATA change form low to high
  	delay_us(4);
 	Set_IIC_SCL; 
-	Set_IIC_SDA;//·¢ËÍI2C×ÜÏß½áÊøĞÅºÅ
+	Set_IIC_SDA;//å‘é€I2Cæ€»çº¿ç»“æŸä¿¡å·
 	delay_us(4);							   	
 }
-//µÈ´ıÓ¦´ğĞÅºÅµ½À´
-//·µ»ØÖµ£º1£¬½ÓÊÕÓ¦´ğÊ§°Ü
-//        0£¬½ÓÊÕÓ¦´ğ³É¹¦
+//ç­‰å¾…åº”ç­”ä¿¡å·åˆ°æ¥
+//è¿”å›å€¼ï¼š1ï¼Œæ¥æ”¶åº”ç­”å¤±è´¥
+//        0ï¼Œæ¥æ”¶åº”ç­”æˆåŠŸ
 u8 IIC_Wait_Ack(void)
 {
 	u8 ucErrTime=0;
-	SDA_IN();      //SDAÉèÖÃÎªÊäÈë  
+	SDA_IN();      //SDAè®¾ç½®ä¸ºè¾“å…¥  
 	Set_IIC_SDA;delay_us(1);	   
 	Set_IIC_SCL;delay_us(1);	 
 	while(READ_SDA)
@@ -72,10 +71,10 @@ u8 IIC_Wait_Ack(void)
 			return 1;
 		}
 	}
-	Clr_IIC_SCL;//Ê±ÖÓÊä³ö0 	   
+	Clr_IIC_SCL;//æ—¶é’Ÿè¾“å‡º0 	   
 	return 0;  
 } 
-//²úÉúACKÓ¦´ğ
+//äº§ç”ŸACKåº”ç­”
 void IIC_Ack(void)
 {
 	Clr_IIC_SCL;
@@ -86,7 +85,7 @@ void IIC_Ack(void)
 	delay_us(2);
 	Clr_IIC_SCL;
 }
-//²»²úÉúACKÓ¦´ğ		    
+//ä¸äº§ç”ŸACKåº”ç­”		    
 void IIC_NAck(void)
 {
 	Clr_IIC_SCL;
@@ -97,33 +96,33 @@ void IIC_NAck(void)
 	delay_us(2);
 	Clr_IIC_SCL;
 }					 				     
-//IIC·¢ËÍÒ»¸ö×Ö½Ú
-//·µ»Ø´Ó»úÓĞÎŞÓ¦´ğ
-//1£¬ÓĞÓ¦´ğ
-//0£¬ÎŞÓ¦´ğ			  
+//IICå‘é€ä¸€ä¸ªå­—èŠ‚
+//è¿”å›ä»æœºæœ‰æ— åº”ç­”
+//1ï¼Œæœ‰åº”ç­”
+//0ï¼Œæ— åº”ç­”			  
 void IIC_Send_Byte(u8 txd)
 {                        
     u8 t;   
 	  SDA_OUT(); 	    
-    Clr_IIC_SCL;//À­µÍÊ±ÖÓ¿ªÊ¼Êı¾İ´«Êä
+    Clr_IIC_SCL;//æ‹‰ä½æ—¶é’Ÿå¼€å§‹æ•°æ®ä¼ è¾“
     for(t=0;t<8;t++)
     {              
         //IIC_SDA=(txd&0x80)>>7;
 		if ((txd&0x80)>>7) 	Set_IIC_SDA
 		else Clr_IIC_SDA;
     txd<<=1; 	  
-		delay_us(2);   //¶ÔTEA5767ÕâÈı¸öÑÓÊ±¶¼ÊÇ±ØĞëµÄ
+		delay_us(2);   //å¯¹TEA5767è¿™ä¸‰ä¸ªå»¶æ—¶éƒ½æ˜¯å¿…é¡»çš„
 		Set_IIC_SCL;
 		delay_us(2); 
 		Clr_IIC_SCL;	
 		delay_us(2);
     }	 
 } 	    
-//¶Á1¸ö×Ö½Ú£¬ack=1Ê±£¬·¢ËÍACK£¬ack=0£¬·¢ËÍnACK   
+//è¯»1ä¸ªå­—èŠ‚ï¼Œack=1æ—¶ï¼Œå‘é€ACKï¼Œack=0ï¼Œå‘é€nACK   
 u8 IIC_Read_Byte(unsigned char ack)
 {
 	unsigned char i,receive=0;
-	SDA_IN();//SDAÉèÖÃÎªÊäÈë
+	SDA_IN();//SDAè®¾ç½®ä¸ºè¾“å…¥
   for(i=0;i<8;i++ )
 	{
 		Clr_IIC_SCL; 
@@ -134,64 +133,64 @@ u8 IIC_Read_Byte(unsigned char ack)
 		delay_us(1); 
 	}					 
 	if (!ack)
-		IIC_NAck();//·¢ËÍnACK
+		IIC_NAck();//å‘é€nACK
 	else
-		IIC_Ack(); //·¢ËÍACK   
+		IIC_Ack(); //å‘é€ACK   
 	return receive;
 }
-//ÔÚPCF5368Ö¸¶¨µØÖ·¶Á³öÒ»¸öÊı¾İ
-//ReadAddr:¿ªÊ¼¶ÁÊıµÄµØÖ·  
-//·µ»ØÖµ  :¶Áµ½µÄÊı¾İ
+//åœ¨PCF5368æŒ‡å®šåœ°å€è¯»å‡ºä¸€ä¸ªæ•°æ®
+//ReadAddr:å¼€å§‹è¯»æ•°çš„åœ°å€  
+//è¿”å›å€¼  :è¯»åˆ°çš„æ•°æ®
 u8 PCF5368_ReadOneByte(u8 ReadAddr)
 {				  
 	u8 temp=0;		  	    																 
 	IIC_Start();   
-	IIC_Send_Byte(0XA2);	   //·¢ËÍĞ´ÃüÁî
+	IIC_Send_Byte(0XA2);	   //å‘é€å†™å‘½ä»¤
 	IIC_Wait_Ack();   
-  IIC_Send_Byte(ReadAddr);   //·¢ËÍµÍµØÖ·
+  IIC_Send_Byte(ReadAddr);   //å‘é€ä½åœ°å€
 	IIC_Wait_Ack();	    
 	IIC_Start();  	 	   
-	IIC_Send_Byte(0XA3);           //½øÈë½ÓÊÕÄ£Ê½			   
+	IIC_Send_Byte(0XA3);           //è¿›å…¥æ¥æ”¶æ¨¡å¼			   
 	IIC_Wait_Ack();	 
   temp=IIC_Read_Byte(0);		   
-  IIC_Stop();//²úÉúÒ»¸öÍ£Ö¹Ìõ¼ş	    
+  IIC_Stop();//äº§ç”Ÿä¸€ä¸ªåœæ­¢æ¡ä»¶	    
 	return temp;
 }
-//ÔÚPCF5368Ö¸¶¨µØÖ·Ğ´ÈëÒ»¸öÊı¾İ
-//WriteAddr  :Ğ´ÈëÊı¾İµÄÄ¿µÄµØÖ·    
-//DataToWrite:ÒªĞ´ÈëµÄÊı¾İ
+//åœ¨PCF5368æŒ‡å®šåœ°å€å†™å…¥ä¸€ä¸ªæ•°æ®
+//WriteAddr  :å†™å…¥æ•°æ®çš„ç›®çš„åœ°å€    
+//DataToWrite:è¦å†™å…¥çš„æ•°æ®
 void PCF5368_WriteOneByte(u8 WriteAddr,u8 DataToWrite)
 {				   	  	    																 
   IIC_Start();   
-	IIC_Send_Byte(0XA2);	    //·¢ËÍĞ´ÃüÁî
+	IIC_Send_Byte(0XA2);	    //å‘é€å†™å‘½ä»¤
 	IIC_Wait_Ack();
-	IIC_Send_Byte(WriteAddr);//·¢ËÍ¸ßµØÖ·
+	IIC_Send_Byte(WriteAddr);//å‘é€é«˜åœ°å€
 	IIC_Wait_Ack();		   										  		   
-	IIC_Send_Byte(DataToWrite);     //·¢ËÍ×Ö½Ú							   
+	IIC_Send_Byte(DataToWrite);     //å‘é€å­—èŠ‚							   
 	IIC_Wait_Ack();  		    	   
-	IIC_Stop();//²úÉúÒ»¸öÍ£Ö¹Ìõ¼ş 
+	IIC_Stop();//äº§ç”Ÿä¸€ä¸ªåœæ­¢æ¡ä»¶ 
 	delay_ms(10);	 
 } 
 /***************************************************************************//**
  * @brief
- *  ¿´ÃÅ¹·´«¸ĞÆ÷³õÊ¼»¯
+ *  çœ‹é—¨ç‹—ä¼ æ„Ÿå™¨åˆå§‹åŒ–
  *
  ******************************************************************************/
 void PCF8563_Init_Register (void)
 {
 	IIC_Init();	 
-	//Í£Ö¹¶¨Ê±Æ÷¼ÆÊı  
+	//åœæ­¢å®šæ—¶å™¨è®¡æ•°  
 	PCF5368_WriteOneByte (0x00, 0x20); 
-	//¶¨Ê±Æ÷²úÉúÂö³åÖĞ¶Ï
+	//å®šæ—¶å™¨äº§ç”Ÿè„‰å†²ä¸­æ–­
 	PCF5368_WriteOneByte (0x01, 0x11); 
-	//µ¹Êı¶¨Ê±Æ÷ 60·ÖÖÓ
+	//å€’æ•°å®šæ—¶å™¨ 60åˆ†é’Ÿ
 	PCF5368_WriteOneByte ( 0x0E, 0x83); 
 	PCF5368_WriteOneByte ( 0x0F, 60); 
 	PCF5368_WriteOneByte ( 0x00, 0x00);  	
 }
 /***************************************************************************//**
  * @brief
- *    »ñÈ¡µ¹¼ÆÊ±µÄÊ±¼ä
+ *    è·å–å€’è®¡æ—¶çš„æ—¶é—´
  *
  ******************************************************************************/
 int PCF8563_Gettime (void)
@@ -200,16 +199,16 @@ int PCF8563_Gettime (void)
 }
 /***************************************************************************//**
  * @brief
- *    ¸´Î»µ¹¼ÆÊ±µÄÊ±¼ä
+ *    å¤ä½å€’è®¡æ—¶çš„æ—¶é—´
  *
  ******************************************************************************/
 void PCF8563_rest (void)
 {   
-	//Í£Ö¹¶¨Ê±Æ÷¼ÆÊı  
+	//åœæ­¢å®šæ—¶å™¨è®¡æ•°  
 	PCF5368_WriteOneByte (0x00, 0x20); 
-	//¶¨Ê±Æ÷²úÉúÂö³åÖĞ¶Ï
+	//å®šæ—¶å™¨äº§ç”Ÿè„‰å†²ä¸­æ–­
 	PCF5368_WriteOneByte (0x01, 0x11); 
-	//µ¹Êı¶¨Ê±Æ÷ 60·ÖÖÓ
+	//å€’æ•°å®šæ—¶å™¨ 60åˆ†é’Ÿ
 	PCF5368_WriteOneByte (0x0E, 0x83); 
 	PCF5368_WriteOneByte (0x0F, 0xFF); 
 	PCF5368_WriteOneByte (0x00, 0x00); 		 
